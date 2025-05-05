@@ -1,0 +1,78 @@
+/* page container */
+body {
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #d8c491;   /* light beige */
+}
+
+/* shrink the presentation video */
+.presentation-video {
+    width: 700px;
+    height: auto;
+    display: inline-block;
+    padding-left: 20px;
+    vertical-align: middle; 
+}
+
+/* stack & shrink all diagram images */
+img {
+    display: inline-block;
+    margin: 10px 0;
+    max-width: 500px;
+    height: auto;
+    padding-left: 20px;
+    vertical-align: middle; 
+}
+
+/* violet headings */
+h1.title,
+h2.section-heading {
+    color: rgb(29, 94, 192);
+    text-decoration: underline;
+}
+
+/* credit styling */
+.credit {
+    padding-left: 30px;
+    color: rgb(29, 94, 192);
+}
+
+/* underline each section heading */
+h2.section-heading {
+    position: relative;
+    margin-top: 2em;
+}
+
+h2.section-heading::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: #aaa;
+    margin: 0.5em 0;
+}
+
+/* Center page title and make it larger */
+h1.title {
+    /* remove any old padding */
+    padding-left: 0;
+  
+    /* center the text */
+    text-align: center;
+  
+    /* ensure it’s treated as a block and can be auto-margined */
+    display: block;
+    margin: 0 auto;
+  
+    /* adjust to taste */
+    font-size: 3rem;
+  }
+  
+  /* Center the credit line */
+  h2.credit {
+    padding-left: 0;
+    text-align: center;
+    display: block;
+    margin: 0.5em auto 2em;
+  }

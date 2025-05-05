@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <h1 class="title">Animation Blending and Collision Detection</h1>
+  <h2 class="credit">By Abdulai Bah</h2>
+  <h2 class="section-heading">Project Summary</h2>
+  <ul>
+    <li>The goal is to create a game in which the character smoothly translates between actions</li>
+    <li>The game should be interactive such that the player can command the character</li>
+    <li>The character should smoothly transition into the action and back to the walk cycle without abrupt changes in limb positions</li>
+  </ul>
+
+  <h2 class="section-heading">Presentation</h2>
+  <video controls class="presentation-video">
+    <source src="media/video.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <h2 class="section-heading">How Animations are Loaded</h2>
+  <p>
+    A set of predetermined animations were loaded and extracted from Mixamo using code from Assignment 2. Initially, animations were loaded using absolute transforms, however, this was difficult to blend as the character would move in space in addition to joint rotations making interpolating frames look nonsensical. This was remedied using Relative Transformations. Instructions for doing this were in the README for fbx-extract that we were provided. Essentially, the absolute/world transform for each joint was calculated using the absolute transform of its parent, its static transform, and its relative rotation.
+  </p>
+
+  <h2 class="section-heading">How Animations are Blended</h2>
+  <p>
+    The program functions using a frame queue that user actions can be added to. If no animation is in the queue at the end of a walk cycle, another walk animation plays. If an animation is queued while walking is in progress, the outgoing walk frames are blended with the incoming action frames. The amount of frames blended is a minimum of the frames in the queue and 15. This form of action interruption makes it so that the resultant blended animation reflects the time at which an input was entered. After each action input, a walking animation is queued and merged with the action animation in order to smoothly return to walking.
+  </p>
+
+  <h2 class="section-heading">How Frames are Blended</h2>
+  <p>
+    Interpolating between frames was difficult when using absolute transforms. Each transformation matrix had translations and rotations applied making them unusable for interpolation. This was made easier using relative rotations because quaternions can be linearly interpolated as was done in Assignment 1. However, the skinning code taken from Assignment 2 required absolute transformations. The final implementation involved taking two frames and an alpha value and interpolating all the quaternions for each joint. Alpha was selected such that the outgoing animation is weighted heavily at the beginning of the blend and lightly towards the end leading to smooth transformations. After the quaternions are interpolated, absolute transformations are calculated for each bone by traversing the hierarchy tree and using static transforms as was done when parsing the animations.
+  </p>
+
+  <h2 class="section-heading">Gameplay Elements</h2>
+  <p>
+    The user can toggle spheres which initiate a sort of game where green spheres represent health points, red spheres represent hurt boxes, blue spheres represent hit boxes, and black spheres represent enemies. If an enemy hits a blue sphere it gets destroyed. If an enemy hits a red sphere it gets destroyed, and the player loses a hit point. Spheres spawn randomly in front of the character and consistently fly towards the point where the character's head was at the time of spawning.
+  </p>
+
+  <h2 class="section-heading">Frame Class</h2>
+  <img src="media/frame_class.png" alt="Frame Class Diagram">
+  <ul>
+    <li>Static data members holding hierarchy, static transforms, and bind pose of the mesh</li>
+    <li>Data members holding relative and absolute transformation when relevant</li>
+    <li>Functions to populate absolute transforms for skinning and merging a frame with another</li>
+  </ul>
+
+  <h2 class="section-heading">Animation Class</h2>
+  <img src="media/animation_class1.png" alt="Animation Class Diagram 1">
+  <img src="media/animation_class2.png" alt="Animation Class Diagram 2">
+  <ul>
+    <li>Vector of frames loaded in from parser function</li>
+    <li>Functions to insert raw frames into a queue or blend its frames with those already in the queue</li>
+  </ul>
+
+  <h2 class="section-heading">FrameQueue Class</h2>
+  <img src="media/framequeue_class1.png" alt="FrameQueue Class Diagram 1">
+  <img src="media/framequeue_class2.png" alt="FrameQueue Class Diagram 2">
+  <ul>
+    <li>Timing information</li>
+    <li>Frame queue to send frames to be queue</li>
+    <li>Advance function run on every render call which pops the queue and loads in another walk animation if queue is empty</li>
+    <li>Animation information such as queue and idx (represents which frame of the current animation is at front of fq)</li>
+    <li>Pointer to a default walk Animation</li>
+  </ul>
+
+  <h2 class="section-heading">Enemy Class</h2>
+  <img src="media/enemy_class.png" alt="Enemy Class Diagram">
+  <ul>
+    <li>Alive flag that gets set false when a collision occurs</li>
+    <li>A direction and current location set in constructor</li>
+    <li>An update function called on every render that moves the current location</li>
+  </ul>
+
+  <h2 class="section-heading">Future Work</h2>
+  <ul>
+    <li>Action frames can't be merged with other action frames since walking is always queued after an action. Given more time, I would have found a way to allow inputs to "unblend" the incoming walk animation and take its place.</li>
+    <li>Gameplay elements would be represented with appropriate meshes such as hearts or daggers</li>
+  </ul>
+
+  <h2 class="section-heading">Sources</h2>
+  <ul>
+    <li>Assignment 2 and Assignment 3 of CSCE 450</li>
+    <li>Relative Transforms formula described <a target="_blank" href="https://help.autodesk.com/view/FBX/2017/ENU/?guid=__files_GUID_10CDD63C_79C1_4F2D_BB28_AD2BE65A02ED_htm">here</a></li>
+  </ul>
+
+</body>
+</html>
